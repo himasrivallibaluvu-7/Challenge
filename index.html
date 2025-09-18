@@ -1,141 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Dustbin Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Workout Posture Detection</title>
+    <style>
+        /* Reset some default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <!-- Google Fonts for styling -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
 
-  <!-- Internal CSS styling -->
-  <style>
-    /* General Reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            text-align: center;
+        }
 
-    body {
-      font-family: 'Roboto', sans-serif;
-      background-color: #f4f7fc;
-      padding: 20px;
-    }
+        .dashboard {
+            width: 80%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
 
-    /* Sidebar styles */
-    .sidebar {
-      width: 240px;
-      background-color: #2c3e50;
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      color: #fff;
-      padding-top: 30px;
-    }
+        .left-panel, .right-panel {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 48%;
+        }
 
-    .sidebar a {
-      display: block;
-      padding: 15px;
-      text-decoration: none;
-      color: #fff;
-      font-size: 18px;
-      margin-bottom: 15px;
-    }
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
 
-    .sidebar a:hover {
-      background-color: #34495e;
-    }
+        .exercise-info {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
 
-    /* Content area styles */
-    .content {
-      margin-left: 260px;
-      padding: 30px;
-    }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-    /* Header */
-    .header {
-      background-color: #34495e;
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        .button:hover {
+            background-color: #45a049;
+        }
 
-    .header h1 {
-      margin: 0;
-    }
+        .posture-feedback {
+            font-size: 16px;
+            font-weight: bold;
+            color: #f44336;
+        }
 
-    .user-info {
-      display: flex;
-      align-items: center;
-    }
+        .good-posture {
+            color: #4CAF50;
+        }
 
-    .user-info img {
-      border-radius: 50%;
-      margin-right: 10px;
-    }
-
-    /* Cards styles */
-    .card {
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      margin-bottom: 30px;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .card h2 {
-      margin-bottom: 10px;
-    }
-
-    .card p {
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .card .progress-bar {
-      width: 80%;
-      height: 20px;
-      background-color: #ecf0f1;
-      border-radius: 10px;
-      position: relative;
-    }
-
-    .progress-bar .fill {
-      height: 100%;
-      border-radius: 10px;
-    }
-
-    .progress-bar .label {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #2c3e50;
-    }
-
-    .chart-container {
-      width: 100%;
-      height: 350px;
-    }
-
-    canvas {
-      width: 100%;
-      height: 100%;
-    }
-
-  </style>
+        #camera-feed {
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+    </style>
 </head>
-
 <body>
 
-  <!-- Sidebar navigation -->
-  <div class="sidebar">
-    <a href="#">Dashboard<
+<header>
+    <h1>Smart Workout Posture Detection</h1>
+</header>
+
+<div class="dashboard">
+    <div class="left-panel">
+        <h2>Exercise Instructions</h2>
+        <div class="exercise-info">
+            <strong>Push-up:</strong> Keep your body straight, and ensure your hands are positioned slightly wider than shoulder-width apart.
+        </div>
+        <div class="exercise-info">
+            <strong>Squat:</strong> Keep your back straight and lower yourself by bending your knees until your thighs are parallel to the ground.
+        </div>
+        <button class="button" onclick="startPostureDetection()">Start Posture Detection</button>
+    </div>
+
+    <div class="right-panel">
+        <h2>Live Posture Feedback</h2>
+        <div id="posture-feedback" class="posture-feedback">Your posture will appear here.</div>
+        <div>
+            <video id="camera-feed" autoplay></video>
+        </div>
+    </div>
+</div>
+
+<script>
+    let videoElement = document.getElementById("camera-feed");
+    let feedbackElement = document.getElementById("posture-feedback");
+
+    async function startPostureDetection() {
+        // Get user's webcam feed
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        videoElement.srcObject = stream;
+
+        // Simulate posture detection (in real-world, you would use ML models like PoseNet, or any API to analyze posture)
+        setInterval(checkPosture, 2000); // Check posture every 2 seconds
+    }
+
+    function checkPosture() {
+        // For now, we simulate posture feedback.
+        const isGoodPosture = Math.random() > 0.5;  // Randomly decide good or bad posture for demo purposes
+
+        if (isGoodPosture) {
+            feedbackElement.innerText = "Good posture! Keep it up.";
+            feedbackElement.classList.remove("posture-feedback");
+            feedbackElement.classList.add("good-posture");
+        } else {
+            feedbackElement.innerText = "Bad posture! Try to straighten your back.";
+            feedbackElement.classList.remove("good-posture");
+            feedbackElement.classList.add("posture-feedback");
+        }
+    }
+</script>
+
+</body>
+</html>
